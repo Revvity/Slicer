@@ -732,6 +732,8 @@ void vtkSegmentation::RemoveSegment(SegmentMap::iterator segmentIt)
 //---------------------------------------------------------------------------
 void vtkSegmentation::RemoveAllSegments()
 {
+  this->SegmentIds.clear();
+
   std::vector<std::string> segmentIds;
   this->GetSegmentIDs(segmentIds);
   for (std::vector<std::string>::iterator segmentIt = segmentIds.begin(); segmentIt != segmentIds.end(); ++segmentIt)
@@ -739,7 +741,6 @@ void vtkSegmentation::RemoveAllSegments()
     this->RemoveSegment(*segmentIt);
   }
   this->Segments.clear();
-  this->SegmentIds.clear();
 
   this->SegmentIdAutogeneratorIndex = 0;
 }
