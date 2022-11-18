@@ -34,12 +34,22 @@ How to backport changes to a specific branch ?
 
 4. Cherry-pick the commit(s)
 
-5. Amend the commit updating title and message to include `[backport]` and `Cherry-picked commit ...` information.
+5. Amend the commit updating title and message to include `[backport PR-1234]` and `Cherry-picked commit ...` information.
 
-    Adding these details streamlines the creation of a new `SonoEQApp-` branch allowing to easily identify which commits are specific to SonoEQApp and which ones have been backported.
+    Adding these details streamlines the creation of new `SonoEQApp-` branch allowing to easily identify which commits are specific to SonoEQApp and which ones have been backported.
 
     ```
-    [backport] BUG: Workaround for Slicer startup hang on Windows11 (# 5947)
+    [backport PR-6675] ENH: Support disconnecting markups toolbar from mouse mode toolbar
+
+    See https://github.com/Slicer/Slicer/pull/6675/commits/ab81e1fa9b46a17e08fc4c10a0658ec9a06efe23
+
+    ...
+    ```
+
+    Or if the change has already been integrated into the upstream repository:
+
+    ```
+    [backport] BUG: Workaround for Slicer startup hang on Windows11
 
     numpy has to be loaded early to avoid hang when loading openblas library.
     This is a temporary workaround and may be removed if the related issue is fixed in Windows11 or numpy (or we find a nicer solution in Slicer).
