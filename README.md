@@ -28,7 +28,7 @@ How to backport changes to a specific branch ?
 
 1. Fork `Slicer/Slicer`
 
-2. Checkout the relevant `SonoEQApp-vX.Y.Z-YYYY-MM-DD-SHA{9}` branch. See [CMakeLists.txt](https://github.com/SonoVol/SonoEQApp/blob/master/CMakeLists.txt) to identify the name of the branch.
+2. Checkout the relevant `SonoEQApp-vX.Y.Z-YYYY-MM-DD-SHA{9}` branch. See [CMakeLists.txt](https://github.com/PerkinElmer/SonoEQApp/blob/main/CMakeLists.txt) to identify the name of the branch.
 
 3. Add the remote from which to cherry-pick commit from
 
@@ -36,7 +36,7 @@ How to backport changes to a specific branch ?
 
 5. Amend the commit updating title and message to include `[backport PR-1234]` and `Cherry-picked commit ...` information.
 
-    Adding these details streamlines the creation of new `SonoEQApp-` branch allowing to easily identify which commits are specific to SonoEQApp and which ones have been backported.
+    Adding these details streamlines the creation of new `SonoEQApp-` branch allowing to easily identify which commits are specific to [SonoEQApp](https://github.com/PerkinElmer/SonoEQApp) and which ones have been backported.
 
     ```
     [backport PR-6675] ENH: Support disconnecting markups toolbar from mouse mode toolbar
@@ -62,7 +62,7 @@ How to backport changes to a specific branch ?
 6. Finally, create a pull request against the relevant `SonoEQApp-vX.Y.Z-YYYY-MM-DD-SHA{9}` branch.
 
 
-_Note: If you have push access to the `SonoVol/Slicer` fork, you could directly push commit to the relevant branch_
+_Note: If you have push access to the `PerkinElmer/Slicer` fork, you could directly push commit to the relevant branch_
 
 
 How to update the version of Slicer ?
@@ -71,7 +71,7 @@ How to update the version of Slicer ?
 1. Clone this repository and add a remote to the official project
 
 ```
-git clone https://github.com/SonoVol/Slicer
+git clone https://github.com/PerkinElmer/Slicer
 cd Slicer
 git remote add upstream https://github.com/Slicer/Slicer
 git fetch upstream
@@ -79,10 +79,10 @@ git fetch upstream
 
 2. Create a new branch following the branch naming convention mentioned in a section above.
 
-3. Cherry-pick the SonoVol specific commits from the last used `SonoEQApp-vX.Y.Z-YYYY-MM-DD-SHA{9}` branch. Resolve conflicts as needed.
+3. Cherry-pick the Perkin Elmer specific commits from the last used `SonoEQApp-vX.Y.Z-YYYY-MM-DD-SHA{9}` branch. Resolve conflicts as needed.
 
    - the commit hash included in each branch name is the Slicer *upstream* hash, so
-     SonoVol specific commits may be viewed with the git range (`..`) operation:
+     Perkin Elmer specific commits may be viewed with the git range (`..`) operation:
 ```
           git log --pretty=format:"%h" {SlicerSHA}..SonoEQApp-xyz-{SlicerSHA}
 ```
@@ -91,4 +91,4 @@ git fetch upstream
 
 5. Publish the branch. (directly in this repo if you have push rights, or on a fork)
 
-6. Update SonoVol CMakeLists.txt by submitting a pull request.
+6. Update the [SonoEQApp](https://github.com/PerkinElmer/SonoEQApp) CMakeLists.txt by submitting a pull request.
