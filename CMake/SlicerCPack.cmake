@@ -400,6 +400,15 @@ if(CPACK_GENERATOR STREQUAL "NSIS")
   slicer_cpack_set("CPACK_NSIS_MUI_ICON")
   slicer_verbose_set(CPACK_NSIS_INSTALLED_ICON_NAME "${app_name}.exe")
 
+  # Create Desktop Shortcut
+  # Note: The Start Menu folder MUI Page has a "Do not create shortcuts" option which will skip start menu and desktop shortcut creation
+  LIST(APPEND CPACK_NSIS_CREATE_ICONS_EXTRA
+      "CreateShortCut '$DESKTOP\\\\${PACKAGE_APPLICATION_NAME}.lnk' '$INSTDIR\\\\${APPLICATION_NAME}.exe'"
+  )
+  LIST(APPEND CPACK_NSIS_DELETE_ICONS_EXTRA
+      "Delete '$DESKTOP\\\\${PACKAGE_APPLICATION_NAME}.lnk'"
+  )
+
   # -------------------------------------------------------------------------
   # File extensions
   # -------------------------------------------------------------------------
