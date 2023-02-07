@@ -1183,7 +1183,7 @@ void qMRMLSegmentEditorWidget::updateEffectList()
 void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLSegmentEditorWidget);
-  if (!this->mrmlScene() || this->mrmlScene()->IsClosing() || this->mrmlScene()->IsBatchProcessing())
+  if (!this->mrmlScene() || this->mrmlScene()->IsClosing())
   {
     return;
   }
@@ -1782,38 +1782,12 @@ void qMRMLSegmentEditorWidget::setMRMLScene(vtkMRMLScene* newScene)
 
   // observe close event so can re-add a parameters node if necessary
   this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndCloseEvent, this, SLOT(onMRMLSceneEndCloseEvent()));
-  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndBatchProcessEvent, this, SLOT(onMRMLSceneEndBatchProcessEvent()));
 }
 
 //-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidget::onMRMLSceneEndCloseEvent()
 {
   this->initializeParameterSetNode();
-  this->updateWidgetFromMRML();
-}
-
-//-----------------------------------------------------------------------------
-void qMRMLSegmentEditorWidget::onMRMLSceneEndBatchProcessEvent()
-{
-  Q_D(qMRMLSegmentEditorWidget);
-  if (!this->mrmlScene())
-  {
-    return;
-  }
-
-  if (d->ParameterSetNode)
-  {
-    if (d->ParameterSetNode->GetSegmentationNode() != d->SegmentationNodeComboBox->currentNode())
-    {
-      this->setSegmentationNode(d->SegmentationNodeComboBox->currentNode());
-    }
-    if (d->ParameterSetNode->GetSourceVolumeNode() != d->SourceVolumeNodeComboBox->currentNode())
-    {
-      this->setSourceVolumeNode(d->SourceVolumeNodeComboBox->currentNode());
-    }
-  }
-
-  // force update (clear GUI if no node is selected anymore)
   this->updateWidgetFromMRML();
 }
 
@@ -2034,10 +2008,6 @@ QString qMRMLSegmentEditorWidget::sourceVolumeNodeID()const
 void qMRMLSegmentEditorWidget::onSegmentationNodeChanged(vtkMRMLNode* node)
 {
   Q_D(qMRMLSegmentEditorWidget);
-  if (!this->mrmlScene() || this->mrmlScene()->IsBatchProcessing())
-  {
-    return;
-  }
   this->setSegmentationNode(node);
 }
 
@@ -2101,10 +2071,6 @@ void qMRMLSegmentEditorWidget::setCurrentSegmentID(const QString segmentID)
 void qMRMLSegmentEditorWidget::onSourceVolumeNodeChanged(vtkMRMLNode* node)
 {
   Q_D(qMRMLSegmentEditorWidget);
-  if (!this->mrmlScene() || this->mrmlScene()->IsBatchProcessing())
-  {
-    return;
-  }
   this->setSourceVolumeNode(node);
 }
 
