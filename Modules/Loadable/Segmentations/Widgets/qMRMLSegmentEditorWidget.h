@@ -494,9 +494,6 @@ protected slots:
   /// Clean up when scene is closed
   void onMRMLSceneEndCloseEvent();
 
-  /// Updates needed after batch processing is done
-  void onMRMLSceneEndBatchProcessEvent();
-
   /// Set default parameters in parameter set node (after setting or closing scene)
   void initializeParameterSetNode();
 
