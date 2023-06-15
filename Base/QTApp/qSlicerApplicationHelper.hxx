@@ -135,7 +135,7 @@ void splashMessage(QScopedPointer<QSplashScreen>& splashScreen, const QString& m
   {
     return;
   }
-  splashScreen->showMessage(message, Qt::AlignBottom | Qt::AlignHCenter);
+  splashScreen->showMessage("   " + message + "\n\n", Qt::AlignBottom | Qt::AlignLeft, Qt::white);
 }
 
 } // end of anonymous namespace
@@ -197,7 +197,10 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
     }
 
     splashScreen.reset(new QSplashScreen(pixmap, Qt::WindowStaysOnTopHint));
-    splashMessage(splashScreen, qSlicerApplication::tr("Initializing..."));
+    QFont font = splashScreen->font();
+    font.setPixelSize(14);
+    splashScreen->setFont(font);
+    splashMessage(splashScreen, qSlicerApplication::tr("Loading..."));
     splashScreen->show();
     // Write a new-line character on the process output to hide the application launcher's splashscreen
     // (SPLASHSCREEN_IGNORE_OUTPUT option is disabled by default).
@@ -238,22 +241,12 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
   }
 
   // Register and instantiate modules
-  splashMessage(splashScreen, qSlicerApplication::tr("Registering modules..."));
   moduleFactoryManager->registerModules();
   if (app.commandOptions()->verboseModuleDiscovery())
   {
     qDebug() << "Number of registered modules:" << moduleFactoryManager->registeredModuleNames().count();
   }
-
-  splashMessage(splashScreen, qSlicerApplication::tr("Instantiating modules..."));
-  // Show the name of each module that is being instantiated to make it easier to see if a module
-  // inappropriately performs some lengthy operations during instantiation.
-  QMetaObject::Connection moduleAboutToBeInstantiatedConnection =
-    QObject::connect(moduleFactoryManager,
-                     &qSlicerAbstractModuleFactoryManager::moduleAboutToBeInstantiated,
-                     [&splashScreen](QString moduleName) { splashMessage(splashScreen, qSlicerApplication::tr("Instantiating module \"%1\"...").arg(moduleName)); });
   moduleFactoryManager->instantiateModules();
-  QObject::disconnect(moduleAboutToBeInstantiatedConnection);
 
   if (splashScreen)
   {
@@ -283,7 +276,6 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
   }
 
   // Create main window
-  splashMessage(splashScreen, qSlicerApplication::tr("Initializing user interface..."));
   if (enableMainWindow)
   {
     window.reset(new SlicerMainWindowType);
@@ -306,7 +298,6 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
   for (const QString& name : moduleFactoryManager->instantiatedModuleNames())
   {
     Q_ASSERT(!name.isNull());
-    splashMessage(splashScreen, qSlicerApplication::tr("Loading module \"%1\"...").arg(name));
     moduleFactoryManager->loadModule(name);
   }
   if (app.commandOptions()->verboseModuleDiscovery())
