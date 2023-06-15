@@ -141,7 +141,7 @@ void splashMessage(QScopedPointer<QSplashScreen>& splashScreen, const QString& m
   {
     return;
   }
-  splashScreen->showMessage(message, Qt::AlignBottom | Qt::AlignHCenter);
+  splashScreen->showMessage("   " + message + "\n\n", Qt::AlignBottom | Qt::AlignLeft, Qt::white);
 }
 
 //----------------------------------------------------------------------------
@@ -309,7 +309,10 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
     }
 
     splashScreen.reset(new QSplashScreen(pixmap, Qt::WindowStaysOnTopHint));
-    splashMessage(splashScreen, qSlicerApplication::tr("Initializing..."));
+    QFont font = splashScreen->font();
+    font.setPixelSize(14);
+    splashScreen->setFont(font);
+    splashMessage(splashScreen, qSlicerApplication::tr("Loading..."));
     splashScreen->show();
     // Write a new-line character on the process output to hide the application launcher's splashscreen
     // (SPLASHSCREEN_IGNORE_OUTPUT option is disabled by default).
@@ -366,15 +369,12 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
   recordStartupPhaseCompletedTime("Initializing the application");
 
   // Register and instantiate modules
-  splashMessage(splashScreen, qSlicerApplication::tr("Registering modules..."));
   moduleFactoryManager->registerModules();
   recordStartupPhaseCompletedTime("Registering modules");
   if (app.commandOptions()->verboseModuleDiscovery())
   {
     qDebug() << "Number of registered modules:" << moduleFactoryManager->registeredModuleNames().count();
   }
-
-  splashMessage(splashScreen, qSlicerApplication::tr("Instantiating modules..."));
 
   // Time each module separately. instantiateModules() below brackets every construction
   // with these two signals (instantiateModule() on its own emits only the second, but
@@ -389,8 +389,6 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
                      &qSlicerAbstractModuleFactoryManager::moduleAboutToBeInstantiated,
                      [&splashScreen, &moduleTimer](QString moduleName)
                      {
-                       splashMessage(splashScreen, qSlicerApplication::tr("Instantiating module \"%1\"...").arg(moduleName));
-                       // Last, so that updating the splash screen is not charged to the module.
                        moduleTimer.restart();
                      });
   QMetaObject::Connection moduleInstantiatedConnection = //
@@ -436,7 +434,6 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
   }
 
   // Create main window
-  splashMessage(splashScreen, qSlicerApplication::tr("Initializing user interface..."));
   if (enableMainWindow)
   {
     window.reset(new SlicerMainWindowType);
@@ -479,9 +476,6 @@ int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app,
   for (const QString& name : moduleFactoryManager->instantiatedModuleNames())
   {
     Q_ASSERT(!name.isNull());
-    splashMessage(splashScreen, qSlicerApplication::tr("Loading module \"%1\"...").arg(name));
-    // Taken after the splash message, so that updating the splash screen is not charged
-    // to the module.
     moduleLoadStartedMs = moduleTimer.nsecsElapsed() / 1e6;
     moduleFactoryManager->loadModule(name);
   }
