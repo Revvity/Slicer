@@ -29,20 +29,21 @@ endif()
 if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
+  # [nose]
+  nose==1.3.7 --hash=sha256:9ff7c6cc443f8c51994b34a667bbcf45afd6d945be7477b52e97516fd17c53ac  # needed for NumPy unit tests
+  # [/nose]
   # [numpy]
   # Hashes correspond to the following packages:
-  #  - numpy-1.25.1-cp39-cp39-macosx_10_9_x86_64.whl
-  #  - numpy-1.25.1-cp39-cp39-macosx_11_0_arm64.whl
-  #  - numpy-1.25.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - numpy-1.25.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - numpy-1.25.1-cp39-cp39-musllinux_1_1_x86_64.whl
-  #  - numpy-1.25.1-cp39-cp39-win_amd64.whl
-  numpy==1.25.1 --hash=sha256:3d7abcdd85aea3e6cdddb59af2350c7ab1ed764397f8eec97a038ad244d2d105 \
-                --hash=sha256:1a180429394f81c7933634ae49b37b472d343cccb5bb0c4a575ac8bbc433722f \
-                --hash=sha256:d412c1697c3853c6fc3cb9751b4915859c7afe6a277c2bf00acf287d56c4e625 \
-                --hash=sha256:20e1266411120a4f16fad8efa8e0454d21d00b8c7cee5b5ccad7565d95eb42dd \
-                --hash=sha256:f76aebc3358ade9eacf9bc2bb8ae589863a4f911611694103af05346637df1b7 \
-                --hash=sha256:1d5d3c68e443c90b38fdf8ef40e60e2538a27548b39b12b73132456847f4b631
+  #  - numpy-1.24.4-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - numpy-1.24.4-cp39-cp39-macosx_11_0_arm64.whl
+  #  - numpy-1.24.4-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - numpy-1.24.4-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - numpy-1.24.4-cp39-cp39-win_amd64.whl
+  numpy==1.24.4 --hash=sha256:2541312fbf09977f3b3ad449c4e5f4bb55d0dbf79226d7724211acc905049400 \
+                --hash=sha256:9667575fb6d13c95f1b36aca12c5ee3356bf001b714fc354eb5465ce1609e62f \
+                --hash=sha256:f3a86ed21e4f87050382c7bc96571755193c4c1392490744ac73d660e8f564a9 \
+                --hash=sha256:d11efb4dbecbdf22508d55e48d9c8384db795e1b7b51ea735289ff96613ff74d \
+                --hash=sha256:befe2bf740fd8373cf56149a5c23a0f601e82869598d41f8e188a0e9869926f8
   # [/numpy]
   ]===])
 
