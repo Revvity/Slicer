@@ -54,10 +54,10 @@ if(NOT Slicer_USE_SYSTEM_${proj})
                             --hash=sha256:8e098148dd37b4ce3baca71fb394c81dc5d9c7728c95df695d2dca218edf40e6
   # [/charset-normalizer]
   # [urllib3]
-  urllib3==2.0.3 --hash=sha256:48e7fafa40319d358848e1bc6809b208340fafe2096f1725d05d67443d0483d1
+  urllib3==1.26.18 --hash=sha256:34b97092d7e0a3a8cf7cd10e386f401b3737364026c45e622aa02903dffe0f07
   # [/urllib3]
   # [requests]
-  requests==2.31.0 --hash=sha256:58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f
+  requests==2.28.2 --hash=sha256:64299f4909223da747622c030b781c0d7811e359c37124b4bd368fb8c6518baa
   # [/requests]
   ]===])
 
