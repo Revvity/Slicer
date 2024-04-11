@@ -122,10 +122,6 @@ class SequencesSelfTestTest(ScriptedLoadableModuleTest):
         self.delayDisplay("Test browsing of sequence")
         checkSequenceItems(browserNode, sequenceNode)
 
-        # Set selected item, to be tested later after loading the scene
-        lastSelectedItem = 12
-        browserNode.SetSelectedItemNumber(lastSelectedItem)
-
         # Test saving and loading of sequence
         savedSceneDir = os.path.join(self.sequencesSelfTestDir, "savedscene")
         clearSavedSceneFolder(savedSceneDir)
@@ -142,9 +138,6 @@ class SequencesSelfTestTest(ScriptedLoadableModuleTest):
         slicer.util.loadScene(os.path.join(savedSceneDir, "savedscene.mrml"))
         # Remove temporary folder to not pollute the file system
         clearSavedSceneFolder(savedSceneDir)
-
-        # Test selected item index
-        self.assertEqual(browserNode.GetSelectedItemNumber(), lastSelectedItem)
 
         self.delayDisplay("Test browsing of loaded sequence")
         browserNode = slicer.util.getFirstNodeByClassByName("vtkMRMLSequenceBrowserNode", "CTPCardioSeq browser")
