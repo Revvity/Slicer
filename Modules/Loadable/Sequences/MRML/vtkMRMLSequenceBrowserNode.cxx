@@ -52,12 +52,11 @@
 namespace
 {
 // First reference is the master sequence node, subsequent references are the synchronized sequence nodes
-const char* SEQUENCE_NODE_REFERENCE_ROLE_BASE = "sequenceNodeRef"; // Old: rootNodeRef
-// Ideally this should be changed to "proxyNodeRef" but we need to maintain it
-// for backwards-compatibility with "dataNodeRef"
-const char* PROXY_NODE_REFERENCE_ROLE_BASE = "dataNodeRef";
+static const char* SEQUENCE_NODE_REFERENCE_ROLE_BASE = "sequenceNodeRef"; // Old: rootNodeRef
+// TODO: Change this to "proxyNodeRef", but need to maintain backwards-compatibility with "dataNodeRef"
+static const char* PROXY_NODE_REFERENCE_ROLE_BASE = "dataNodeRef";
 
-const char* PROXY_NODE_COPY_ATTRIBUTE_NAME = "proxyNodeCopy";
+static const char* PROXY_NODE_COPY_ATTRIBUTE_NAME = "proxyNodeCopy";
 
 const int INVALID_ITEM_NUMBER = -1;
 } // namespace
@@ -485,8 +484,8 @@ std::string vtkMRMLSequenceBrowserNode::SetAndObserveMasterSequenceNodeID(const 
     this->RemoveAllSequenceNodes();
     return "";
   }
-  if (this->GetMasterSequenceNode()             //
-      && this->GetMasterSequenceNode()->GetID() //
+  if (this->GetMasterSequenceNode()                        //
+      && this->GetMasterSequenceNode()->GetID() != nullptr //
       && strcmp(this->GetMasterSequenceNode()->GetID(), sequenceNodeID) == 0)
   {
     // no change
@@ -507,7 +506,7 @@ std::string vtkMRMLSequenceBrowserNode::SetAndObserveMasterSequenceNodeID(const 
     this->RemoveAllSequenceNodes();
     // Master is the first element in the postfixes vector.
     std::string rolePostfix = this->AddSynchronizedSequenceNodeID(sequenceNodeID);
-    this->SetSelectedItemNumber(this->GetNumberOfItems() > 0 ? 0 : INVALID_ITEM_NUMBER);
+    this->SetSelectedItemNumber(0);
     return rolePostfix;
   }
   MRMLNodeModifyBlocker blocker(this);
@@ -527,8 +526,8 @@ std::string vtkMRMLSequenceBrowserNode::SetAndObserveMasterSequenceNodeID(const 
   }
   else
   {
-    // We don't know what items are in this new master node, select the first one
-    this->SetSelectedItemNumber(this->GetNumberOfItems() > 0 ? 0 : INVALID_ITEM_NUMBER);
+    // We don't know what items are in this new master node
+    this->SetSelectedItemNumber(0);
   }
   return rolePostfix;
 }
@@ -578,7 +577,7 @@ void vtkMRMLSequenceBrowserNode::RemoveAllSequenceNodes()
     }
     this->RemoveSynchronizedSequenceNode(node->GetID());
   }
-  this->SetSelectedItemNumber(INVALID_ITEM_NUMBER);
+  this->SetSelectedItemNumber(-1);
 }
 
 //----------------------------------------------------------------------------
@@ -851,7 +850,7 @@ std::string vtkMRMLSequenceBrowserNode::AddSynchronizedSequenceNodeID(const char
   if (this->SynchronizationPostfixes.empty())
   {
     // first sequence, initialize selected item number
-    this->SetSelectedItemNumber(this->GetNumberOfItems() > 0 ? 0 : INVALID_ITEM_NUMBER);
+    this->SetSelectedItemNumber(0);
   }
   this->SynchronizationPostfixes.push_back(rolePostfix);
   std::string sequenceNodeReferenceRole = SEQUENCE_NODE_REFERENCE_ROLE_BASE + rolePostfix;
@@ -979,7 +978,7 @@ void vtkMRMLSequenceBrowserNode::SetRecordingActive(bool recording)
 //---------------------------------------------------------------------------
 int vtkMRMLSequenceBrowserNode::SelectFirstItem()
 {
-  int selectedItemNumber = (this->GetNumberOfItems() > 0) ? 0 : INVALID_ITEM_NUMBER;
+  int selectedItemNumber = (this->GetNumberOfItems() > 0) ? 0 : -1;
   this->SetSelectedItemNumber(selectedItemNumber);
   return selectedItemNumber;
 }
@@ -999,7 +998,7 @@ int vtkMRMLSequenceBrowserNode::SelectNextItem(int selectionIncrement /*=1*/)
   if (numberOfItems == 0)
   {
     // nothing to replay
-    return INVALID_ITEM_NUMBER;
+    return -1;
   }
   int selectedItemNumber = this->GetSelectedItemNumber();
   MRMLNodeModifyBlocker blocker(this); // invoke modification event once all the modifications has been completed
@@ -1089,26 +1088,6 @@ void vtkMRMLSequenceBrowserNode::ProcessMRMLEvents(vtkObject* caller, unsigned l
   }
   else if (vtkMRMLSequenceNode::SafeDownCast(modifiedNode))
   {
-    if (this->SelectedItemNumber < 0)
-    {
-      // There was no valid selected item number. If the master sequence node now contains an item
-      // then automatically select it.
-      // This is consistent with automatically setting selected item number to INVALID_ITEM_NUMBER when all items are removed.
-      if (this->GetNumberOfItems() > 0)
-      {
-        this->SetSelectedItemNumber(0);
-      }
-    }
-    else
-    {
-      // There was a valid selection. If that selected item number does not exist anymore then update the selection.
-      if (this->SelectedItemNumber >= this->GetNumberOfItems())
-      {
-        this->SetSelectedItemNumber(this->GetNumberOfItems() - 1);
-      }
-    }
-    // It is important to call SetSelectedItemNumber(...) before invoking SequenceNodeModifiedEvent,
-    // to ensure that selected item number is already valid.
     this->InvokeCustomModifiedEvent(SequenceNodeModifiedEvent, modifiedNode);
   }
 }
