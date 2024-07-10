@@ -9,3 +9,4 @@ sphinx-issues
 sphinx_markdown_tables>=0.0.17
 sphinx-notfound-page
 sphinx_rtd_theme>=0.5.2
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
