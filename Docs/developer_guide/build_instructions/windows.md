@@ -8,7 +8,7 @@ Slicer relies on a number of large third-party libraries (such VTK, ITK, DCMTK),
 
 ## Install prerequisites
 
-- [CMake](https://www.cmake.org/cmake/resources/software.html) version >= 3.16.3.
+- 3.16.3 <= [CMake](https://www.cmake.org/cmake/resources/software.html) version < 4.0.0.
   - Avoid versions with known Slicer build issues:
     - 3.21.0 (CMake issue [22476](https://gitlab.kitware.com/cmake/cmake/-/issues/22476))
     - 3.25.0 to 3.25.2 (CMake issues [24180](https://gitlab.kitware.com/cmake/cmake/-/issues/24180), [24567](https://gitlab.kitware.com/cmake/cmake/-/issues/24567))
