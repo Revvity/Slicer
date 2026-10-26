@@ -1452,6 +1452,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::onSegmentsOrderModified(vtkObje
   {
     return;
   }
+  this->updateAllSegmentsFromMRML(segmentationNode);
 
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)

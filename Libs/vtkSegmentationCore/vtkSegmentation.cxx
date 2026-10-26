@@ -736,17 +736,16 @@ void vtkSegmentation::RemoveSegment(SegmentMap::iterator segmentIt)
 //---------------------------------------------------------------------------
 void vtkSegmentation::RemoveAllSegments()
 {
-  this->SegmentIds.clear();
-
-  std::vector<std::string> segmentIds;
-  this->GetSegmentIDs(segmentIds);
-  for (std::vector<std::string>::iterator segmentIt = segmentIds.begin(); segmentIt != segmentIds.end(); ++segmentIt)
+  for (SegmentMap::iterator segmentIt = this->Segments.begin(); segmentIt != this->Segments.end(); ++segmentIt)
   {
-    this->RemoveSegment(*segmentIt);
+    segmentIt->second.GetPointer()->RemoveObservers(vtkCommand::ModifiedEvent, this->SegmentCallbackCommand);
   }
   this->Segments.clear();
-
+  this->SegmentIds.clear();
   this->SegmentIdAutogeneratorIndex = 0;
+  this->UpdateSourceRepresentationObservers();
+  this->Modified();
+  this->InvokeEvent(vtkSegmentation::SegmentsOrderModified);
 }
 
 //---------------------------------------------------------------------------
