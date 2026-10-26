@@ -788,48 +788,41 @@ void qMRMLSubjectHierarchyModel::rebuildFromSubjectHierarchy()
   {
     // Remove all items
     const int oldColumnCount = this->columnCount();
-    this->removeRows(0, this->rowCount());
+    this->clear();
     this->setColumnCount(oldColumnCount);
     return;
   }
-  else if (!this->subjectHierarchySceneItem())
-  {
-    // No subject hierarchy root item has been created yet, but the subject hierarchy
-    // node is valid, so we need to create a scene item
-    vtkIdType sceneItemID = d->SubjectHierarchyNode->GetSceneItemID();
-    QList<QStandardItem*> sceneItems;
-    QStandardItem* sceneItem = new QStandardItem();
-    sceneItem->setFlags(Qt::ItemIsDropEnabled | Qt::ItemIsEnabled);
-    sceneItem->setText("Scene");
-    sceneItem->setData(sceneItemID, qMRMLSubjectHierarchyModel::SubjectHierarchyItemIDRole);
-    sceneItems << sceneItem;
-    for (int i = 1; i < this->columnCount(); ++i)
-    {
-      QStandardItem* sceneOtherColumn = new QStandardItem();
-      sceneOtherColumn->setFlags(Qt::NoItemFlags);
-      sceneItems << sceneOtherColumn;
-    }
-    sceneItem->setColumnCount(this->columnCount());
 
-    d->RowCache[sceneItemID] = QModelIndex(); // Insert invalid item in cache to indicate that item is in the model but its index is unknown
-    this->insertRow(0, sceneItems);
-    d->RowCache[sceneItemID] = sceneItem->index();
-  }
-  else
+  const int oldColumnCount = this->columnCount();
+  QList<QStandardItem*> headerItems;
+  for (int column = 0; column < oldColumnCount; ++column)
   {
-    // Update the scene item index in case subject hierarchy node has changed
-    this->subjectHierarchySceneItem()->setData(QVariant::fromValue(d->SubjectHierarchyNode->GetSceneItemID()), qMRMLSubjectHierarchyModel::SubjectHierarchyItemIDRole);
-    d->RowCache[d->SubjectHierarchyNode->GetSceneItemID()] = this->subjectHierarchySceneItem()->index();
+    headerItems << this->takeHorizontalHeaderItem(column);
+  }
+  this->clear();
+  this->setColumnCount(oldColumnCount);
+  for (int column = 0; column < oldColumnCount; ++column)
+  {
+    this->setHorizontalHeaderItem(column, headerItems[column]);
   }
 
-  if (!this->subjectHierarchySceneItem())
+  vtkIdType sceneItemID = d->SubjectHierarchyNode->GetSceneItemID();
+  QList<QStandardItem*> sceneItems;
+  QStandardItem* sceneItem = new QStandardItem();
+  sceneItem->setFlags(Qt::ItemIsDropEnabled | Qt::ItemIsEnabled);
+  sceneItem->setText("Scene");
+  sceneItem->setData(sceneItemID, qMRMLSubjectHierarchyModel::SubjectHierarchyItemIDRole);
+  sceneItems << sceneItem;
+  for (int i = 1; i < this->columnCount(); ++i)
   {
-    qCritical() << Q_FUNC_INFO << ": Failed to create subject hierarchy scene item";
-    return;
+    QStandardItem* sceneOtherColumn = new QStandardItem();
+    sceneOtherColumn->setFlags(Qt::NoItemFlags);
+    sceneItems << sceneOtherColumn;
   }
-
-  // Remove rows before populating
-  this->subjectHierarchySceneItem()->removeRows(0, this->subjectHierarchySceneItem()->rowCount());
+  sceneItem->setColumnCount(this->columnCount());
+  d->RowCache[sceneItemID] = QModelIndex();
+  this->insertRow(0, sceneItems);
+  d->RowCache[sceneItemID] = sceneItem->index();
 
   // Insert None item on top if enabled
   if (d->NoneEnabled)
